@@ -349,6 +349,7 @@ extern C_ROCKSDB_LIBRARY_API void crocksdb_close(crocksdb_t* db);
 // crocksdb_continue_bg_work is called
 extern C_ROCKSDB_LIBRARY_API void crocksdb_pause_bg_work(crocksdb_t* db);
 extern C_ROCKSDB_LIBRARY_API void crocksdb_continue_bg_work(crocksdb_t* db);
+extern C_ROCKSDB_LIBRARY_API void crocksdb_cancel_all_bg_work(crocksdb_t* db);
 
 extern C_ROCKSDB_LIBRARY_API void crocksdb_disable_manual_compaction(
     crocksdb_t* db);

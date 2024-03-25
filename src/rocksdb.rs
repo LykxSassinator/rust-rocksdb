@@ -837,6 +837,12 @@ impl DB {
         }
     }
 
+    pub fn cancel_all_bg_work(&self) {
+        unsafe {
+            crocksdb_ffi::crocksdb_cancel_all_bg_work(self.inner);
+        }
+    }
+
     pub fn disable_manual_compaction(&self) {
         unsafe {
             crocksdb_ffi::crocksdb_disable_manual_compaction(self.inner);
@@ -3349,6 +3355,37 @@ mod test {
             0
         );
         db.continue_bg_work();
+        h.join().unwrap();
+    }
+
+    #[test]
+    fn test_cancel_all_bg_work() {
+        let path = tempdir_with_prefix("_rust_rocksdb_cancel_all_bg_work");
+        let db = DB::open_default(path.path().to_str().unwrap()).unwrap();
+        let db = Arc::new(db);
+        let db1 = db.clone();
+        let builder = thread::Builder::new().name(String::from("put-thread"));
+        let h = builder
+            .spawn(move || {
+                db1.put(b"k1", b"v1").unwrap();
+                db1.put(b"k2", b"v2").unwrap();
+                let mut fopts = FlushOptions::default();
+                fopts.set_wait(true);
+                db1.flush(&fopts).unwrap();
+                db1.compact_range(None, None);
+            })
+            .unwrap();
+        // Cancel all currently running background processes.
+        db.cancel_all_bg_work();
+        assert_eq!(
+            db.get_property_int("rocksdb.num-running-compactions")
+                .unwrap(),
+            0
+        );
+        assert_eq!(
+            db.get_property_int("rocksdb.num-running-flushes").unwrap(),
+            0
+        );
         h.join().unwrap();
     }
 

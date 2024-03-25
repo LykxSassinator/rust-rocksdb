@@ -946,6 +946,10 @@ void crocksdb_continue_bg_work(crocksdb_t* db) {
   db->rep->ContinueBackgroundWork();
 }
 
+void crocksdb_cancel_all_bg_work(crocksdb_t* db) {
+  CancelAllBackgroundWork(db->rep, true);
+}
+
 void crocksdb_disable_manual_compaction(crocksdb_t* db) {
   db->rep->DisableManualCompaction();
 }
