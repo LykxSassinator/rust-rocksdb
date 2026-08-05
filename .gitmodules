@@ -1,6 +1,6 @@
 [submodule "rocksdb"]
 	path = librocksdb_sys/rocksdb
-	url = https://github.com/LykxSassinator/rust-rocksdb.git
+	url = https://github.com/LykxSassinator/rocksdb.git
 	branch = debug_for_19906
 
 [submodule "titan"]
